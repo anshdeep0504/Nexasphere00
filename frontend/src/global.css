@@ -1,0 +1,38 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Poppins:wght@400;600;700&display=swap');
+
+body {
+  font-family: 'Inter', 'Poppins', Arial, sans-serif;
+  background: linear-gradient(135deg, #f8fafc 0%, #e0e7ff 100%);
+  min-height: 100vh;
+  color: #222;
+}
+
+.font-inter {
+  font-family: 'Inter', Arial, sans-serif;
+}
+.font-poppins {
+  font-family: 'Poppins', Arial, sans-serif;
+}
+
+::-webkit-scrollbar {
+  width: 8px;
+  background: #e0e7ff;
+}
+::-webkit-scrollbar-thumb {
+  background: #a5b4fc;
+  border-radius: 8px;
+}
+
+.glass {
+  background: rgba(255,255,255,0.7);
+  box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.18);
+  backdrop-filter: blur(8px);
+  border-radius: 1.5rem;
+  border: 1px solid rgba(255,255,255,0.18);
+}
+
+/* Dark mode base (optional, can be toggled) */
+body.dark {
+  background: linear-gradient(135deg, #18181b 0%, #312e81 100%);
+  color: #f3f4f6;
+} 
