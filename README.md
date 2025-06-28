@@ -38,7 +38,7 @@ A full-stack, real-time social media web app where users can connect, share, cha
 
 ### 🔎 Smart Search
 - Fuzzy search bar to find users instantly
-- Partial name matching (e.g., “rom” finds “romrom”)
+- Partial name matching (e.g., “Ans” finds “Anshdeep”)
 
 ---
 
@@ -56,9 +56,11 @@ A full-stack, real-time social media web app where users can connect, share, cha
 - **Socket.IO** for real-time communication
 
 ### ☁️ Cloud & Deployment
-- **Cloudinary** for media storage
-- **MongoDB Atlas** for database
-- **Render / Netlify / Vercel** for deployment
+* **Cloudinary** for media storage  
+* **MongoDB Atlas** for database  
+* **Vercel** for frontend deployment  
+* **Railway** for backend deployment  
+
 
 ---
 
