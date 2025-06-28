@@ -4,27 +4,23 @@ import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 import { setSelectedUser } from "@/redux/Slices/authSlice";
 import { Input } from "./ui/input";
 import { Button } from "./ui/button";
-import { RiMessengerLine } from "react-icons/ri"; // Remix Icon
+import { RiMessengerLine } from "react-icons/ri";
 import { MessageCircle } from "lucide-react";
 import Messages from "./Messages";
-import axios from "axios";
 import { toast } from "sonner";
 import { setMessages, setTypingUser, setMessageRead } from "@/redux/Slices/chatSlice";
-import { SocketContext } from '../context/SocketContext';
-import axiosWithAuth from '../lib/axiosWithAuth';
+import { SocketContext } from "../context/SocketContext";
+import axiosWithAuth from "../lib/axiosWithAuth";
 import { useParams } from "react-router-dom";
 
 const ChatPage = () => {
   const [message, setMessage] = useState("");
-  const { user, suggestedUsers, selectedUser } = useSelector(
-    (store) => store.auth
-  );
+  const { user, suggestedUsers, selectedUser } = useSelector((store) => store.auth);
   const [search, setSearch] = useState("");
   const { onlineUsers, messages } = useSelector((store) => store.chat);
   const socket = useContext(SocketContext);
   const dispatch = useDispatch();
   const { id } = useParams();
-
   const isMobile = window.innerWidth < 768;
 
   useEffect(() => {
@@ -37,32 +33,37 @@ const ChatPage = () => {
     if (!selectedUser || !user) return;
     (async () => {
       try {
-        const token = localStorage.getItem('token');
-  
-        await api.patch(`/api/v1/message/read/${selectedUser._id}`,);
-      } catch (e) { /* ignore */ }
+        const api = axiosWithAuth();
+        await api.patch(`/api/v1/message/read/${selectedUser._id}`);
+      } catch (e) {
+        // silently fail
+      }
     })();
   }, [selectedUser, user]);
 
   useEffect(() => {
     if (!socket || !selectedUser) return;
+
     const handleTyping = (data) => {
       if (data.senderId === selectedUser._id) {
         dispatch(setTypingUser(selectedUser.userName));
         setTimeout(() => dispatch(setTypingUser(null)), 2000);
       }
     };
+
     const handleMessageRead = (data) => {
       if (data.readerId === selectedUser._id) {
-        messages.forEach(msg => {
+        messages.forEach((msg) => {
           if (msg.senderId === user._id && msg.receiverId === selectedUser._id && !msg.read) {
             dispatch(setMessageRead({ messageId: msg._id }));
           }
         });
       }
     };
+
     socket.on("typing", handleTyping);
     socket.on("messageRead", handleMessageRead);
+
     return () => {
       socket.off("typing", handleTyping);
       socket.off("messageRead", handleMessageRead);
@@ -75,6 +76,7 @@ const ChatPage = () => {
       try {
         const api = axiosWithAuth();
         const res = await api.get(`/api/v1/message/getmessage/${selectedUser._id}`);
+
         dispatch(setMessages(res.data.messages || []));
       } catch (error) {
         if (error?.response?.status === 401) {
@@ -89,110 +91,92 @@ const ChatPage = () => {
   }, [selectedUser, user, dispatch]);
 
   const api = axiosWithAuth();
+
   const sendMessageHandler = async (receiverId) => {
     try {
-      const res = await api.post(
-        `/api/v1/message/send/${receiverId}`,
-        { message }
-      );
+      const res = await api.post(`/api/v1/message/send/${receiverId}`, { message });
       if (res.data.success) {
         dispatch(setMessages([...messages, res.data.newMessage]));
         setMessage("");
         toast.success(res.data.message);
       }
     } catch (error) {
-      toast.error(
-        error?.response?.data?.message ||
-          "Something went wrong. Please try again."
-      );
+      if (error?.response?.data?.message) {
+        toast.error(error.response.data.message);
+      }
+      // No fallback toast – silently ignore if no real message
     }
   };
 
-  const followingUsers = suggestedUsers.filter((u) =>
-    user.following.includes(u._id)
-  );
-
-  const handleLogout = () => {
-    localStorage.removeItem('token');
-    // Optionally, redirect to login or home page
-    // navigate('/login');
-    // Optionally, clear user state in Redux
-  };
+  const followingUsers = suggestedUsers.filter((u) => user.following.includes(u._id));
 
   return (
-    <div className="flex md:ml-[16%] h-screen">
-      {/* Chat List (show on desktop, or on mobile if no user selected) */}
+    <div className="flex md:ml-[16%] h-screen bg-black text-white">
       {(!isMobile || !selectedUser) && (
-        <section className="w-full md:w-1/4 border-r border-r-gray-700 bg-[#18181b] dark:bg-[#18181b]">
-          <h1 className="font-bold px-7 py-3.5 text-xl ">{user?.userName}</h1>
-          <div className="px-4 pb-2">Add commentMore actions
-            <input
-              type="text"
-              value={search}
-              onChange={e => setSearch(e.target.value)}
-              placeholder="Search users..."
-              className="w-full px-3 py-2 rounded-lg bg-[#23232b] text-white border border-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
+        <aside className="w-full md:w-1/4 border-r border-gray-300 dark:border-gray-800 bg-gray-200 dark:bg-[#23232b] text-gray-900 dark:text-gray-100 shadow-lg rounded-r-3xl transition-all duration-300">
+          <div className="px-6 py-6 border-b border-gray-300 dark:border-gray-800 flex items-center justify-between">
+            <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100 tracking-wide">{user?.userName}</h1>
           </div>
-          <hr className="mb-2 border-gray-700" />
-          <div className="overflow-y-auto h-[75vh] pr-2">
+
+          <div className="overflow-y-auto h-[85vh] custom-scrollbar px-2 py-4 space-y-2">
             {followingUsers.map((u) => {
               const isOnline = onlineUsers.includes(u?._id);
+              const isSelected = selectedUser?._id === u._id;
               return (
                 <div
                   key={u._id}
                   onClick={() => dispatch(setSelectedUser(u))}
-                  className="flex gap-3 items-center p-3 hover:bg-gray-100 dark:hover:bg-[#23232b] cursor-pointer"
+                  className={`flex items-center gap-4 px-4 py-3 rounded-xl cursor-pointer transition border border-transparent group
+                    ${isSelected ? 'bg-gradient-to-r from-blue-400/20 to-pink-400/20 border-l-4 border-blue-400 dark:border-pink-400' : 'hover:bg-gray-300 dark:hover:bg-[#353545]'}
+                  `}
                 >
                   <div className="relative">
-                    <Avatar>
+                    <Avatar className="w-10 h-10">
                       <AvatarImage src={u?.profilePicture} />
-                      <AvatarFallback>CN</AvatarFallback>
+                      <AvatarFallback className="text-gray-900">CN</AvatarFallback>
                     </Avatar>
                     {isOnline && (
-                      <span className="absolute bottom-0 right-0 block w-3 h-3 bg-green-500 border-2 border-white dark:border-[#23232b] rounded-full"></span>
+                      <span className="absolute bottom-0 right-0 w-2.5 h-2.5 bg-green-500 border-2 border-black rounded-full"></span>
                     )}
                   </div>
                   <div className="flex flex-col">
-                    <span className="font-medium">{u?.userName}</span>
-                    <span
-                      className={`text-xs font-bold ${
-                        isOnline ? "text-green-600" : "text-red-600"
-                      }`}
-                    >
-                      {isOnline ? "online" : "offline"}
+                    <span className="text-sm font-semibold text-gray-900 dark:text-gray-100">{u?.userName}</span>
+                    <span className={`text-xs ${isOnline ? "text-green-600 dark:text-green-400" : "text-gray-500 dark:text-gray-400"}`}>
+                      {isOnline ? "Online" : "Offline"}
                     </span>
                   </div>
                 </div>
               );
             })}
           </div>
-        </section>
+        </aside>
       )}
-      {/* Chat Window (show on desktop, or on mobile if user selected) */}
+
       {(!isMobile || selectedUser) && (
         selectedUser ? (
-          <section className="flex-1 flex flex-col h-full bg-black">
-            <div className="flex gap-3 items-center px-3 py-3 border-b border-gray-800 sticky top-0 bg-black z-index-10">
+          <main className="flex-1 flex flex-col bg-gradient-to-br from-black via-gray-900 to-gray-800 h-full rounded-3xl shadow-2xl m-4 p-4">
+            <div className="flex items-center gap-3 px-4 py-4 border-b border-gray-800 sticky top-0 bg-black z-10">
               <div className="relative">
-                <Avatar>
+                <Avatar className="w-10 h-10">
                   <AvatarImage src={selectedUser?.profilePicture} />
                   <AvatarFallback>CN</AvatarFallback>
                 </Avatar>
                 {onlineUsers.includes(selectedUser?._id) && (
-                  <span className="absolute bottom-0 right-0 block w-3 h-3 bg-green-500 border-2 border-black rounded-full"></span>
+                  <span className="absolute bottom-0 right-0 w-2.5 h-2.5 bg-green-500 border-2 border-black rounded-full"></span>
                 )}
               </div>
               <div className="flex flex-col">
-                <span className="text-white">{selectedUser?.userName}</span>
+                <span className="font-medium text-lg">{selectedUser?.userName}</span>
+                <span className="text-xs text-gray-500">
+                  {onlineUsers.includes(selectedUser?._id) ? "Active now" : "Offline"}
+                </span>
               </div>
             </div>
 
             <Messages selectedUser={selectedUser} />
 
-            <div className="flex items-center justify-end p-3 md:p-5 border-t border-t-gray-800 pb-20 md:pb-8 bg-black">
+            <div className="px-4 py-4 border-t border-gray-800 bg-[#0f0f0f] flex items-center gap-3 sticky bottom-0">
               <Input
-                type="text"
                 value={message}
                 onChange={(e) => {
                   setMessage(e.target.value);
@@ -203,27 +187,27 @@ const ChatPage = () => {
                     });
                   }
                 }}
-                className="flex-1 mr-2 focus-visible:ring-transparent bg-gray-900 text-white rounded-full px-4 py-2 border-none"
-                placeholder="Message..."
+                className="flex-1 bg-[#1f1f1f] text-white border-none rounded-full px-4 py-2 text-sm"
+                placeholder="Type a message..."
               />
               <Button
                 onClick={() => sendMessageHandler(selectedUser?._id)}
-                className="bg-blue-500 text-white hover:bg-blue-600 px-4 py-2 rounded-full"
+                className="bg-[#3797f0] hover:bg-[#1877f2] text-white rounded-full px-5 py-2 text-sm"
               >
                 Send
               </Button>
             </div>
-          </section>
+          </main>
         ) : (
           !isMobile && (
-            <div className="flex flex-col items-center justify-center mx-auto text-center mt-10 ">
-              <div className="relative w-32 h-32 my-4">
-                <MessageCircle className="w-full h-full stroke-[1]" />
-                <RiMessengerLine className="absolute inset-0 m-auto w-15 h-15" />
+            <main className="flex flex-col items-center justify-center flex-1 bg-gradient-to-br from-black via-gray-900 to-gray-800 text-white text-center rounded-3xl shadow-2xl m-4 p-4">
+              <div className="relative w-28 h-28 mb-4">
+                <MessageCircle className="w-full h-full opacity-30" />
+                <RiMessengerLine className="absolute inset-0 w-14 h-14 m-auto text-white opacity-60" />
               </div>
-              <h1 className="font-semibold text-lg">Your Messages</h1>
-              <span className="text-gray-600">Send a message to start a chat.</span>
-            </div>
+              <h2 className="text-xl font-semibold">Your Messages</h2>
+              <p className="text-sm text-gray-500 mt-1">Send a message to start a chat.</p>
+            </main>
           )
         )
       )}

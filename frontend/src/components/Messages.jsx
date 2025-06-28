@@ -52,19 +52,19 @@ const Messages = ({ selectedUser}) => {
               alt="User Avatar"
               className="object-cover"
             />
-            <AvatarFallback className="bg-gray-700 text-white">
+            <AvatarFallback className="bg-gray-700 dark:bg-gray-800 text-gray-900">
               CN
             </AvatarFallback>
           </Avatar>
 
-          <h2 className="text-lg font-bold text-black">
+          <h2 className="text-lg font-bold text-white dark:text-white">
             {selectedUser?.userName}
           </h2>
           <p className="text-gray-400 mb-3">
             {selectedUser?.userName} · Instagram
           </p>
 
-          <Button variant='secondary' className="text-center rounded-l-lg rounded-r-lg bg-gray-600 hover:bg-gray-500 text-white font-medium px-3 py-1 mb-3">
+          <Button variant='secondary' className="text-center rounded-l-lg rounded-r-lg bg-gray-600 dark:bg-gray-700 hover:bg-gray-500 dark:hover:bg-gray-600 text-white font-medium px-3 py-1 mb-3">
             <Link to={`/profile/${selectedUser._id}`}><span className="text-center text-sm">View profile</span></Link>
           </Button>
 
@@ -97,7 +97,7 @@ const Messages = ({ selectedUser}) => {
           if (msg.isDeletedForEveryone) {
             return (
               <div key={msg._id} className="flex justify-center my-2">
-                <div className="flex items-center gap-2 px-4 py-2 rounded-2xl text-xs italic text-gray-400 bg-gray-800">
+                <div className="flex items-center gap-2 px-4 py-2 rounded-2xl text-xs italic text-gray-400 bg-gray-800 dark:bg-gray-900">
                   <Trash2 size={16} className="text-gray-400" />
                   Deleted for everyone
                 </div>
@@ -115,8 +115,8 @@ const Messages = ({ selectedUser}) => {
                     <div
                       className={`max-w-xs px-4 py-2 rounded-2xl text-sm break-words shadow-md ${
                         isSender
-                          ? "bg-blue-500 text-white rounded-br-none"
-                          : "bg-gray-800 text-white rounded-bl-none"
+                          ? "bg-blue-500 text-white rounded-br-none dark:bg-blue-600"
+                          : "bg-gray-800 text-white rounded-bl-none dark:bg-gray-900"
                       }`}
                     >
                       {isHtml ? (

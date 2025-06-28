@@ -3,29 +3,20 @@ import React, { useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Button } from "./ui/button";
 import { Textarea } from "./ui/textarea";
-import {
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "./ui/select";
 import { toast } from "sonner";
-import axios from "axios";
 import { Loader2 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { setAuthUser } from "@/redux/Slices/authSlice";
-import axiosWithAuth from '../lib/axiosWithAuth';
+import axiosWithAuth from "../lib/axiosWithAuth";
 
 const EditProfile = () => {
   const imageRef = useRef();
   const [loading, setLoading] = useState(false);
   const { user } = useSelector((store) => store.auth);
+
   const [input, setInput] = useState({
     profilePicture: user?.profilePicture,
     bio: user?.bio,
-    gender: user?.gender,
   });
 
   const navigate = useNavigate();
@@ -36,36 +27,26 @@ const EditProfile = () => {
     if (file) setInput({ ...input, profilePicture: file });
   };
 
-  const genderHandler = (value) => {
-    setInput({ ...input, gender: value });
-  };
-
   const editProfileHandler = async () => {
     const formData = new FormData();
-    if(input.profilePicture) formData.append("profilePicture", input.profilePicture);
+    if (input.profilePicture) formData.append("profilePicture", input.profilePicture);
     formData.append("bio", input.bio);
-    formData.append("gender", input.gender);
-    
+
     try {
       setLoading(true);
       const api = axiosWithAuth();
-      const res = await api.post(
-        `/api/v1/user/profile/edit`,
-        formData,
-        {
-            headers: {
-                "Content-Type": "multipart/form-data",
-            },
-        }
-      );
+      const res = await api.post(`/api/v1/user/profile/edit`, formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
 
       if (res.data.success) {
         const updatedUserData = {
-            ...user,
-            bio:res.data.user?.bio,
-            profilePicture:res.data.user?.profilePicture,
-            gender:res.data.user?.gender
-        }
+          ...user,
+          bio: res.data.user?.bio,
+          profilePicture: res.data.user?.profilePicture,
+        };
         dispatch(setAuthUser(updatedUserData));
         navigate(`/profile/${user?._id}`);
         toast.success(res.data.message);
@@ -73,11 +54,10 @@ const EditProfile = () => {
     } catch (error) {
       console.log(error);
       toast.error(
-        error?.response?.data?.message ||
-          "Something went wrong. Please try again."
+        error?.response?.data?.message || "Something went wrong. Please try again."
       );
     } finally {
-        setLoading(false)
+      setLoading(false);
     }
   };
 
@@ -88,27 +68,24 @@ const EditProfile = () => {
 
         <div className="flex items-center justify-between bg-[#e7e5e5] dark:bg-[#23232b] p-5 rounded-2xl">
           <div className="flex items-center gap-4">
-            <div className="flex items-center gap-4">
-              <div className="flex items-center justify-center">
-                <Avatar className="w-10 h-10">
-                  <AvatarImage
-                    className="w-full h-full flex items-center justify-center rounded-full"
-                    src={user?.profilePicture}
-                  />
-                  <AvatarFallback className="w-full h-full bg-[#646464e1] text-white  font-medium flex items-center justify-center rounded-full">
-                    CN
-                  </AvatarFallback>
-                </Avatar>
-              </div>
+            <Avatar className="w-10 h-10">
+              {user?.profilePicture && (
+                <AvatarImage
+                  className="w-full h-full rounded-full"
+                  src={user.profilePicture}
+                />
+              )}
+              <AvatarFallback className="w-full h-full bg-[#646464e1] text-white font-medium flex items-center justify-center rounded-full">
+                CN
+              </AvatarFallback>
+            </Avatar>
 
-              <div>
-                <h2 className="font-semibold text-sm ">{user?.userName}</h2>
-                <span className="text-gray-500 text-sm">
-                  {user?.bio || "Bio here "}
-                </span>
-              </div>
+            <div>
+              <h2 className="font-semibold text-sm">{user?.userName}</h2>
+              <span className="text-gray-500 text-sm">{user?.bio || "Bio here"}</span>
             </div>
           </div>
+
           <input ref={imageRef} onChange={fileHandler} type="file" className="hidden" />
           <Button
             variant="default"
@@ -118,6 +95,7 @@ const EditProfile = () => {
             Change photo
           </Button>
         </div>
+
         <div className="mt-5">
           <h1 className="font-semibold mb-2">Bio</h1>
           <Textarea
@@ -127,20 +105,7 @@ const EditProfile = () => {
             className="focus-visible:ring-transparent bg-white dark:bg-[#18181b] dark:text-white"
           />
         </div>
-        <div className="mt-5">
-          <h1 className="font-semibold mb-2">Gender</h1>
-          <Select defaultValue={input.gender} onValueChange={genderHandler}>
-            <SelectTrigger className="w-full bg-white dark:bg-[#18181b] dark:text-white">
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectGroup>
-                <SelectItem value="male">Male</SelectItem>
-                <SelectItem value="female">Female</SelectItem>
-              </SelectGroup>
-            </SelectContent>
-          </Select>
-        </div>
+
         <div className="flex justify-end mt-5">
           {loading ? (
             <Button className="w-fit bg-blue-500 hover:bg-blue-600 cursor-pointer">
@@ -148,7 +113,10 @@ const EditProfile = () => {
               Please Wait...
             </Button>
           ) : (
-            <Button onClick={editProfileHandler} className="w-fit bg-blue-500 hover:bg-blue-600 cursor-pointer">
+            <Button
+              onClick={editProfileHandler}
+              className="w-fit bg-blue-500 hover:bg-blue-600 cursor-pointer"
+            >
               Submit
             </Button>
           )}

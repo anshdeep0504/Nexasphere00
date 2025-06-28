@@ -12,7 +12,8 @@ const useGetAllMessages = () => {
     const fetchAllMessages = async () => {
       try {
         const api = axiosWithAuth();
-        const res = await api.get(`/api/v1/message/allmessages/${selectedUser?._id}`);
+        const res = await api.get(`/api/v1/message/getmessage/${selectedUser._id}`);
+
         if (res.data.success) {
           dispatch(setMessages(res.data.messages));
         }

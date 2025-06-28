@@ -76,20 +76,17 @@ const CreatePost = ({ user, open, setOpen }) => {
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogContent className="max-w-2xl w-full p-0 overflow-hidden rounded-3xl bg-[#18181b]/80 backdrop-blur-xl shadow-2xl border border-[#23232b]/60 text-white transition-all duration-300">
-        <DialogHeader className="text-center font-extrabold text-2xl py-5 border-b border-[#23232b]/60 bg-transparent tracking-tight">Create new post</DialogHeader>
+      <DialogContent className="max-w-2xl w-full p-0 overflow-hidden rounded-3xl bg-[#18181b]/80 backdrop-blur-xl shadow-2xl border border-[#23232b]/60 text-white transition-all duration-300 min-h-[420px]">
+        <DialogHeader className="flex justify-center items-center font-extrabold text-2xl py-3 border-b border-[#23232b]/60 bg-transparent tracking-tight">
+          <span className="mx-auto">Create new post</span>
+        </DialogHeader>
         <div className="flex flex-col md:flex-row w-full">
           {/* Left: Image Upload/Preview */}
-          <div className="flex-1 flex flex-col items-center justify-center p-8 bg-[#121212]/70 min-h-[340px] border-r border-[#23232b]/40">
+          <div className="flex-1 flex flex-col items-center justify-center p-8 bg-[#121212]/70 border-r border-[#23232b]/40">
             {!imagePreview ? (
-              <label
-                htmlFor="file-upload"
-                className="flex flex-col items-center justify-center w-full h-64 min-h-[16rem] border-2 border-dashed border-blue-400/40 rounded-2xl cursor-pointer transition-all duration-200 hover:border-blue-500/80 focus-within:border-blue-500/80 bg-[#23232b]/40 backdrop-blur-md group shadow-lg text-center"
-                tabIndex={0}
-                aria-label="Upload image"
-              >
-                <FiImage className="w-14 h-14 text-blue-400/70 mb-3 group-hover:scale-110 transition-transform duration-200" />
-                <span className="text-gray-300 font-medium text-base flex items-center justify-center w-full">Drag & drop or click to select an image</span>
+              <div className="flex flex-col items-center justify-center w-full gap-8">
+                <FiImage className="w-16 h-16 text-gray-300 mb-8" />
+                <div className="text-base font-normal text-gray-400 mb-8 text-center">Select a photo or video to share</div>
                 <input
                   id="file-upload"
                   ref={imageRef}
@@ -98,7 +95,14 @@ const CreatePost = ({ user, open, setOpen }) => {
                   className="hidden"
                   onChange={getFileHandler}
                 />
-              </label>
+                <Button
+                  onClick={() => imageRef.current.click()}
+                  className="w-full bg-blue-500 hover:bg-blue-600 text-white font-medium rounded-full py-3 text-base transition-all duration-200 focus:ring-2 focus:ring-blue-400/80 focus:outline-none"
+                  aria-label="Select image from computer"
+                >
+                  Select from Computer
+                </Button>
+              </div>
             ) : (
               <div className="relative w-full flex flex-col items-center">
                 <img
@@ -118,7 +122,7 @@ const CreatePost = ({ user, open, setOpen }) => {
             )}
           </div>
           {/* Right: Form Fields */}
-          <div className="flex-1 flex flex-col justify-between p-8 gap-8 bg-[#18181b]/80">
+          <div className="flex-1 flex flex-col justify-center p-8 gap-6 bg-[#18181b]/80 mx-auto">
             {/* User Info */}
             <div className="flex items-center gap-4 mb-2 border-b border-[#23232b]/40 pb-4">
               <Avatar className="w-14 h-14 shadow-md">
@@ -127,28 +131,29 @@ const CreatePost = ({ user, open, setOpen }) => {
               </Avatar>
               <div>
                 <h1 className="font-bold text-lg leading-tight">{user?.userName}</h1>
-                <span className="text-gray-400 text-xs font-medium">{user?.bio}</span>
               </div>
             </div>
             {/* Caption */}
-            <div>
+            <div className="flex justify-center w-full">
               <Textarea
-                className="resize-none focus-visible:ring-2 focus-visible:ring-blue-400/80 border border-[#23232b]/60 rounded-2xl text-base bg-[#23232b]/70 text-white placeholder-gray-400 min-h-[80px] shadow-sm focus:shadow-blue-400/10 transition-all"
+                className="w-full h-44 resize-none px-4 py-3 focus-visible:ring-2 focus-visible:ring-blue-400/80 border border-[#23232b]/60 rounded-2xl text-base bg-[#23232b]/70 text-white placeholder-gray-400 shadow-sm focus:shadow-blue-400/10 transition-all overflow-y-auto whitespace-pre-line"
                 placeholder="Write a caption..."
                 aria-label="Caption"
                 maxLength={2200}
                 value={caption}
                 onChange={(e) => setCaption(e.target.value)}
+                wrap="hard"
+                spellCheck={false}
               />
-              <div className={`text-xs mt-1 text-right ${caption.length > 2200 ? 'text-red-400' : 'text-gray-400'}`}>{caption.length}/2200</div>
             </div>
+            <div className={`text-xs mt-1 text-right ${caption.length > 2200 ? 'text-red-400' : 'text-gray-400'}`}>{caption.length}/2200</div>
             {/* Location */}
             <div>
               <label className="block text-xs font-semibold mb-1 text-gray-300 tracking-wide" htmlFor="location-input">Location Name</label>
               <input
                 id="location-input"
                 type="text"
-                className="w-full border border-[#23232b]/60 rounded-2xl px-3 py-2 text-base bg-[#23232b]/70 text-white placeholder-gray-400 focus:ring-2 focus:ring-blue-400/80 outline-none shadow-sm focus:shadow-blue-400/10 transition-all"
+                className="w-full border border-[#23232b]/60 rounded-2xl px-4 py-3 text-base bg-[#23232b]/70 text-white placeholder-gray-400 focus:ring-2 focus:ring-blue-400/80 outline-none shadow-sm focus:shadow-blue-400/10 transition-all"
                 placeholder="e.g. New York"
                 value={location.name}
                 onChange={e => setLocation({ ...location, name: e.target.value })}
@@ -157,16 +162,6 @@ const CreatePost = ({ user, open, setOpen }) => {
             </div>
             {/* Actions */}
             <div className="flex flex-col gap-3 mt-4">
-              {!imagePreview && (
-                <Button
-                  onClick={() => imageRef.current.click()}
-                  className="w-full bg-gradient-to-r from-blue-500 to-blue-700 hover:from-blue-600 hover:to-blue-800 text-white font-bold rounded-2xl py-3 shadow-lg transition-all duration-200 focus:ring-2 focus:ring-blue-400/80 focus:outline-none"
-                  aria-label="Select image from computer"
-                  style={{boxShadow: '0 4px 24px 0 rgba(0,0,0,0.10)'}}
-                >
-                  Select from Computer
-                </Button>
-              )}
               {imagePreview && (
                 loading ? (
                   <Button className="w-full bg-gradient-to-r from-blue-500 to-blue-700 text-white font-bold rounded-2xl py-3 shadow-lg" disabled>

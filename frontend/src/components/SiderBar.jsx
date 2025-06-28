@@ -58,9 +58,9 @@ const SiderBar = () => {
         {/* Logo */}
         <div className="flex items-center justify-center h-24">
           <div className="rounded-full bg-black shadow p-3 flex items-center justify-center transition-all">
-            <span className="text-4xl font-extrabold text-red-600">N</span>
+            <span className="text-4xl font-extrabold bg-gradient-to-r from-pink-500 via-yellow-400 to-blue-500 bg-clip-text text-transparent animate-gradient">N</span>
           </div>
-          <span className="ml-4 text-2xl font-bold text-white hidden group-hover:inline transition-all">Nexasphere</span>
+          <span className="ml-4 text-2xl font-bold text-white hidden group-hover:inline transition-all"></span>
         </div>
         {/* Navigation */}
         <nav className="flex-1 flex flex-col gap-2 items-center md:items-start px-2 mt-2 justify-center group-hover:justify-start">

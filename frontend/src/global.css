@@ -35,4 +35,11 @@ body {
 body.dark {
   background: linear-gradient(135deg, #18181b 0%, #312e81 100%);
   color: #f3f4f6;
+}
+
+body.dark ::-webkit-scrollbar {
+  background: #18181b;
+}
+body.dark ::-webkit-scrollbar-thumb {
+  background: #312e81;
 } 
