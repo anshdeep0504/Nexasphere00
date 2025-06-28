@@ -1,4 +1,4 @@
-import React, { useState, createContext, useContext } from "react";
+import React, { useState } from "react";
 import { Label } from "./ui/label";
 import { Input } from "./ui/input";
 import { Button } from "./ui/button";
@@ -19,7 +19,7 @@ const Login = () => {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const [loginType, setLoginType] = useState("user"); // 'user' or 'admin'
+  const [loginType, setLoginType] = useState("user");
 
   const changeEventHandler = (e) => {
     setInput({ ...input, [e.target.name]: e.target.value });
@@ -33,8 +33,8 @@ const Login = () => {
         `${import.meta.env.VITE_BACKEND_URL}/api/v1/user/login`,
         input
       );
-      localStorage.setItem('token', response.data.token);
-      dispatch(setAuthUser(response.data.user)); 
+      localStorage.setItem("token", response.data.token);
+      dispatch(setAuthUser(response.data.user));
       navigate("/");
       toast.success(response.data.message);
       setInput({
@@ -57,13 +57,22 @@ const Login = () => {
       <Card className="w-full max-w-md shadow-xl border-2 border-gray-800 bg-black text-white">
         <CardHeader>
           <div className="flex flex-col items-center mb-4">
-            <div className="text-5xl font-extrabold text-red-600 mb-2">N</div>
+            {/* 🌈 Rainbow Gradient N Logo */}
+            <div className="text-5xl font-extrabold mb-2 tracking-wider">
+              <span className="bg-gradient-to-r from-red-500 via-yellow-400 via-green-400 via-blue-500 to-purple-500 bg-clip-text text-transparent">
+                N
+              </span>
+            </div>
           </div>
           <div className="flex justify-center gap-4 mb-4">
             <Button
               type="button"
               variant={loginType === "user" ? "default" : "outline"}
-              className={loginType === "user" ? "bg-black text-white border border-gray-700" : "bg-transparent text-white border border-gray-700"}
+              className={
+                loginType === "user"
+                  ? "bg-black text-white border border-gray-700"
+                  : "bg-transparent text-white border border-gray-700"
+              }
               onClick={() => setLoginType("user")}
             >
               User
@@ -71,7 +80,11 @@ const Login = () => {
             <Button
               type="button"
               variant={loginType === "admin" ? "default" : "outline"}
-              className={loginType === "admin" ? "bg-black text-white border border-gray-700" : "bg-transparent text-white border border-gray-700"}
+              className={
+                loginType === "admin"
+                  ? "bg-black text-white border border-gray-700"
+                  : "bg-transparent text-white border border-gray-700"
+              }
               onClick={() => setLoginType("admin")}
             >
               Admin
@@ -91,8 +104,10 @@ const Login = () => {
                 name="email"
                 value={input.email}
                 onChange={changeEventHandler}
-                placeholder={loginType === "admin" ? "Enter admin email" : "Enter your email"}
-                className="mt-1"
+                placeholder={
+                  loginType === "admin" ? "Enter admin email" : "Enter your email"
+                }
+                className="bg-zinc-900 mt-1 text-white"
               />
             </div>
             <div>
@@ -103,25 +118,29 @@ const Login = () => {
                 name="password"
                 value={input.password}
                 onChange={changeEventHandler}
-                placeholder={loginType === "admin" ? "Enter admin password" : "Enter your password"}
-                className="mt-1"
+                placeholder={
+                  loginType === "admin"
+                    ? "Enter admin password"
+                    : "Enter your password"
+                }
+                className="bg-zinc-900 mt-1 text-white"
               />
             </div>
             {loading ? (
-              <Button>
+              <Button disabled>
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                 Please wait...
               </Button>
             ) : (
-              <Button className="mt-2" type="submit">
+              <Button className="mt-2 bg-gray-300 text-black" type="submit">
                 Login
-              </Button> 
+              </Button>
             )}
-            <p className="text-sm text-center text-muted-foreground">
-              Create a Account?{" "}
+            <p className="text-sm text-center text-gray-400">
+              Create an Account?{" "}
               <Link
                 to="/signup"
-                className="text-blue-600 hover:underline hover:opacity-90"
+                className="text-blue-500 hover:underline hover:opacity-90"
               >
                 SignUp
               </Link>

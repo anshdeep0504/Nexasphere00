@@ -2,12 +2,11 @@ import React, { useState } from "react";
 import { Label } from "./ui/label";
 import { Input } from "./ui/input";
 import { Button } from "./ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
 import axios from "axios";
 import { toast } from "sonner";
 import { Link, useNavigate } from "react-router-dom";
 import { Loader2 } from "lucide-react";
-import axiosWithAuth from '../lib/axiosWithAuth';
+import axiosWithAuth from "../lib/axiosWithAuth";
 
 const Signup = () => {
   const [input, setInput] = useState({
@@ -18,7 +17,6 @@ const Signup = () => {
 
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
-
   const api = axiosWithAuth();
 
   const changeEventHandler = (e) => {
@@ -60,72 +58,80 @@ const Signup = () => {
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-white to-slate-100 p-4">
-      <Card className="w-full max-w-md shadow-xl border-2 border-gray-100">
-        <CardHeader>
-          <CardTitle className="text-center text-2xl font-semibold tracking-tight">
-            Create an Account
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <form className="flex flex-col gap-4" onSubmit={signupHandler}>
-            <div>
-              <Label htmlFor="userName">Username</Label>
-              <Input
-                id="userName"
-                name="userName"
-                value={input.userName}
-                onChange={changeEventHandler}
-                placeholder="Enter your username"
-                className="mt-1"
-              />
-            </div>
-            <div>
-              <Label htmlFor="email">Email</Label>
-              <Input
-                id="email"
-                type="email"
-                name="email"
-                value={input.email}
-                onChange={changeEventHandler}
-                placeholder="Enter your email"
-                className="mt-1"
-              />
-            </div>
-            <div>
-              <Label htmlFor="password">Password</Label>
-              <Input
-                id="password"
-                type="password"
-                name="password"
-                value={input.password}
-                onChange={changeEventHandler}
-                placeholder="Enter your password"
-                className="mt-1"
-              />
-            </div>
-            {loading ? (
-              <Button>
-                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                Please wait...
-              </Button>
-            ) : (
-              <Button className="mt-2" type="submit">
-                Signup
-              </Button> 
-            )}
-            <p className="text-sm text-center text-muted-foreground">
-              Already have an account?{" "}
-              <Link
-                to="/login"
-                className="text-blue-600 hover:underline hover:opacity-90"
-              >
-                Login
-              </Link>
-            </p>
-          </form>
-        </CardContent>
-      </Card>
+    <div className="min-h-screen flex items-center justify-center bg-black text-white p-4">
+      <div className="w-full max-w-md border border-gray-700 rounded-lg p-6 shadow-lg bg-black">
+        {/* 🌈 Multichromatic Gradient 'N' Logo */}
+        <div className="text-4xl font-extrabold text-center mb-4 tracking-wider">
+          <span className="bg-gradient-to-r from-red-500 via-yellow-500 via-green-500 via-blue-500 to-purple-500 bg-clip-text text-transparent">
+            N
+          </span>
+        </div>
+
+        <h2 className="text-xl font-semibold text-center mb-4">
+          Create an Account
+        </h2>
+
+        <form className="flex flex-col gap-4" onSubmit={signupHandler}>
+          <div>
+            <Label htmlFor="userName">Username</Label>
+            <Input
+              id="userName"
+              name="userName"
+              value={input.userName}
+              onChange={changeEventHandler}
+              placeholder="Enter your username"
+              className="bg-zinc-900 mt-1 text-white"
+            />
+          </div>
+
+          <div>
+            <Label htmlFor="email">Email</Label>
+            <Input
+              id="email"
+              type="email"
+              name="email"
+              value={input.email}
+              onChange={changeEventHandler}
+              placeholder="Enter your email"
+              className="bg-zinc-900 mt-1 text-white"
+            />
+          </div>
+
+          <div>
+            <Label htmlFor="password">Password</Label>
+            <Input
+              id="password"
+              type="password"
+              name="password"
+              value={input.password}
+              onChange={changeEventHandler}
+              placeholder="Enter your password"
+              className="bg-zinc-900 mt-1 text-white"
+            />
+          </div>
+
+          {loading ? (
+            <Button disabled>
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              Please wait...
+            </Button>
+          ) : (
+            <Button className="mt-2 bg-gray-300 text-black" type="submit">
+              Signup
+            </Button>
+          )}
+
+          <p className="text-sm text-center text-gray-400">
+            Already have an account?{" "}
+            <Link
+              to="/login"
+              className="text-blue-500 hover:underline hover:opacity-90"
+            >
+              Login
+            </Link>
+          </p>
+        </form>
+      </div>
     </div>
   );
 };
